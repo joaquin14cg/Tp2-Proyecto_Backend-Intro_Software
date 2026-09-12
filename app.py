@@ -2,8 +2,8 @@ import os
 
 import mysql.connector
 from dotenv import load_dotenv
-from flask import Flask
-
+from flask import Flask, request, jsonify 
+import re
 
 load_dotenv()
 
@@ -20,6 +20,26 @@ def obtener_conexion():
     )
 
     return conexion
+
+@app.post("/socios")
+def crear_socio():
+    data = request.get_json()
+    nombre = data.get('nombre')
+    email = data.get('email')
+    if not nombre:
+        return {"error": "El nombre es obligatorio"}, 400
+    if not email:
+        return {"error": "El email es obligatorio"}, 400
+    email = email.strip().lower()
+    patron_email = r'^[\w\.-]+@[\w\.-]+\.\w+$'
+    if not re.match(patron_email, email):
+        return {"error": "El formato de email ingresado no es valido"}, 400
+
+    
+
+
+        
+
 
 
 @app.get("/")
