@@ -21,6 +21,21 @@ def obtener_conexion():
 
     return conexion
 
+
+@app.get("/")
+def inicio():
+    conexion = obtener_conexion()
+
+    cursor = conexion.cursor()
+    cursor.execute("SELECT * FROM deportes")
+
+    deportes = cursor.fetchall()
+
+    cursor.close()
+    conexion.close()
+
+    return {"deportes": deportes}
+
 @app.route('/socios', methods=['POST'])
 def crear_socio():
     data = request.get_json()
@@ -51,23 +66,11 @@ def crear_socio():
         cursor.close()
         conexion.close()
         return jsonify({"mensaje": "El socio fue creado con exito"}), 201
-        
 
-
-
-@app.get("/")
-def inicio():
-    conexion = obtener_conexion()
-
-    cursor = conexion.cursor()
-    cursor.execute("SELECT * FROM deportes")
-
-    deportes = cursor.fetchall()
-
-    cursor.close()
-    conexion.close()
-
-    return {"deportes": deportes}
+@app.route('/socios', methods =['GET'])
+def listar_socios():
+    nombre = request.args.get('nombre')
+    activo = request.args.get('activo')
 
 
 if __name__ == "__main__":
