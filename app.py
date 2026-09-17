@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 from flask import Flask
-from socios import socios_bp
+from src.routes.socios import socios_bp
 from db import obtener_conexion
 load_dotenv()
 
