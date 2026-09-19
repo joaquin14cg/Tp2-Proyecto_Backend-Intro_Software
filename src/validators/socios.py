@@ -1,5 +1,5 @@
 from .. import db
-
+import re
 def construir_socio_dto(socio:dict)->dict:
     return {
         'id':       socio['id'],
@@ -8,9 +8,12 @@ def construir_socio_dto(socio:dict)->dict:
         'activo':   socio['activo']
     }
 
-def crear_socio():
-    if not validar_mail():
-        return jsonify({"error" : "Ingrese un formato de mail valido"}), 400
-    if not validar_nombre():
-        return jsonify({"error": "El campo 'Nombre' es obligatorio"}), 400
+
+def validar_mail(email)->str:
+    email = validar_string_no_vacio(email, 'email')
+    if not re.match(patron_email, email):
+
+def validar_socio(datos:dict):
+    if not datos.get():
+        
     

@@ -1,5 +1,6 @@
 from .. import db
 from ..repositories import socios as socios_db
+from ..validators import socios as validador_socios
 
 
 def construir_socio_dto(socio:dict)->dict:
@@ -26,8 +27,12 @@ def buscar_socio_por_id(id_socio: int)->dict:
 def editar_socio(id_socio: int, socio:dict)->dict:
 
 
-def crear_socio(body:dict)->dict:
-    datos = validar_body_socio(body)
-    validar_email(email)
+def crear_socio(nuevo_socio:dict)->dict:
+    validador_socios.validar_socio(nuevo_socio)
+    email = nuevo_socio.get('email')
+    if socios_db.validar_email_disponible(email) == False:
+        return  
+    validar_email_disponible(datos['email'])
+
     
     
