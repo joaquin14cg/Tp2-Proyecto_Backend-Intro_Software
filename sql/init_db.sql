@@ -54,6 +54,16 @@ CREATE TABLE reservas (
     FOREIGN KEY (cancha_id) REFERENCES canchas(id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+CREATE TABLE bloqueos(
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+
+    cancha_id INT NOT NULL,
+    fecha_bloqueo DATE NOT NULL,
+    inicio DATETIME(6) NOT NULL,
+    fin DATETIME(6) NOT NULL,
+    motivo VARCHAR(255) NOT NULL,
+    FOREIGN KEY (cancha_id) REFERENCES canchas(id)
+)
 
 -- Datos de prueba
 
