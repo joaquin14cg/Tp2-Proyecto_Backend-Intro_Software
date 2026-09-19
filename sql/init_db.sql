@@ -1,4 +1,4 @@
-SET NAMES utf8mb4;
+SET NAMES utf8mb4; -- sirve para trabajar con caracteres tipo ú
 
 USE club_deportivo;
 
@@ -8,9 +8,9 @@ DROP TABLE IF EXISTS canchas;
 DROP TABLE IF EXISTS deportes;
 
 CREATE TABLE deportes (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id  INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL
-) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci; -- character set define cómo se almacenan los caracteres especiales como tildes y ñ, y collation define cómo se comparan y ordenan esos caracteres (no distingue entre mayúsculas y minúsculas).
 
 INSERT INTO deportes (nombre)
 VALUES
@@ -23,10 +23,10 @@ CREATE TABLE canchas (
     nombre VARCHAR(100) NOT NULL,
     deporte_id INT NOT NULL,
     precio_hora INT NOT NULL,
-    techada BOOLEAN NOT NULL DEFAULT FALSE,
+    techada BOOLEAN NOT NULL DEFAULT FALSE, --booleano obliga que sea TRUE o FALSE y por defecto es FALSE
     activa BOOLEAN NOT NULL DEFAULT TRUE,
 
-    FOREIGN KEY (deporte_id) REFERENCES deportes(id)
+    FOREIGN KEY (deporte_id) REFERENCES deportes(id) --FOREIGN KEY establece una relación entre la tabla canchas y deportes. Hay siempre un valor numero para un id
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE socios (
@@ -42,7 +42,7 @@ CREATE TABLE reservas (
     socio_id INT NOT NULL,
     cancha_id INT NOT NULL,
 
-    inicio DATETIME(6) NOT NULL,
+    inicio DATETIME(6) NOT NULL, --YYYY-MM-DD HH:MM:SS
     fin DATETIME(6) NOT NULL,
 
     estado VARCHAR(20) NOT NULL DEFAULT 'confirmada',
