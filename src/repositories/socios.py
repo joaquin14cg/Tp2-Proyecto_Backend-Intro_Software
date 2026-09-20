@@ -2,7 +2,7 @@ from db import obtener_conexion
 
 
 
-def validar_email_disponible(email:str)->bool:
+def existe_socio_con_email(email:str)->bool:
     conexion = obtener_conexion()
     cursor = conexion.cursor()
     cursor.execute('SELECT 1 FROM socios WHERE email = %s' , (email,))
