@@ -18,6 +18,11 @@ def construir_cancha_dto(cancha: dict) -> dict:
 def listar_canchas() -> list[dict]:
     return[construir_cancha_dto(c) for c in obtener_todas_las_canchas()]
 
+def obtener_cancha(id_cancha: int) -> dict | None:
+    cancha_db = obtener_cancha_por_id(id_cancha)
+    if cancha_db = None:
+        return None
+    return construir_cancha_dto(cancha_db)
 
 def borrar_cancha(id_cancha: int) -> None:
 
