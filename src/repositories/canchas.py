@@ -36,3 +36,26 @@ def eliminar_cancha(id_cancha: int):
     conexion.commit()
     cursor.close()
     conexion.close()
+
+def actualizar_cancha(id_cancha: int, datos: dict):
+    conexion = obtener_conexion()
+    cursor = conexion.cursor()
+    campos = []
+    valores = []
+
+    for campo, valor in datos.items():
+        campos.append(f"{campo} = %s")
+        valores.append(valor)
+
+    valores.append(id_cancha)
+
+    consulta = f"""
+        UPDATE canchas
+        SET {', '.join(campos)}
+        WHERE id = %s
+    """
+
+    cursor.execute(consulta, tuple(valores))
+    conexion.commit()
+    cursor.close()
+    conexion.close()

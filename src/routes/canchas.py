@@ -1,5 +1,5 @@
-from flask import Blueprint, jsonify
-from services.canchas import listar_canchas, borrar_cancha, obtener_cancha
+from flask import Blueprint, jsonify, request
+from services.canchas import listar_canchas, borrar_cancha, obtener_cancha, modificar_cancha
 
 canchas_bp = Blueprint('canchas', __name__)
 
@@ -19,6 +19,15 @@ def obtener_cancha_por_id_route(id_cancha: int):
 def eliminar_cancha_route(id_cancha):
     try:
         borrar_cancha(id_cancha)
+        return '', 204
+    except ValueError as error:
+        return jsonify(error.args[0]), error.args[1]
+
+@canchas_bp.route('/canchas/<int:id_cancha>', methods=['PATCH'])
+def modificar_cancha_route(id_cancha):
+    try:
+        body = request.get_json(silent=True)
+        modificar_cancha(id_cancha, body)
         return '', 204
     except ValueError as error:
         return jsonify(error.args[0]), error.args[1]

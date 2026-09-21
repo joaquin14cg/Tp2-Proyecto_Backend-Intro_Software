@@ -2,9 +2,12 @@ from repositories.canchas import obtener_todas_las_canchas
 from repositories.canchas import (
     obtener_cancha_por_id,
     tiene_reservas,
-    eliminar_cancha
+    eliminar_cancha,
+    actualizar_cancha
 )
 from utils import construir_error_api
+from constants import MIN_ID
+from validators.canchas import validar_patch_cancha
 
 def construir_cancha_dto(cancha: dict) -> dict:
     return { 
@@ -58,3 +61,30 @@ def borrar_cancha(id_cancha: int) -> None:
         )
 
     eliminar_cancha(id_cancha)
+
+def modificar_cancha(id_cancha: int, body: dict) -> None:
+
+    if id_cancha < MIN_ID:
+        raise ValueError(
+            construir_error_api(
+                code='cancha.invalid_id',
+                message='ID de cancha inválido',
+                description='El ID de la cancha debe ser un entero positivo'
+            ),
+            400
+        )
+        
+    cancha = obtener_cancha_por_id(id_cancha)
+
+    if cancha is None:
+        raise ValueError(
+            construir_error_api(
+                code='cancha.not_found',
+                message='Cancha no encontrada',
+                description=f'No existe una cancha con el id {id_cancha}'
+            ),
+            404
+        )
+
+    datos = validar_patch_cancha(body)
+    actualizar_cancha(id_cancha, datos)
