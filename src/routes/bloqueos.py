@@ -14,3 +14,11 @@ def get_bloqueos():
 @bloqueos_bp.route('/bloqueos', methods=['post'])
 def crear_bloqueo():
     return jsonify(), 200
+
+@bloqueos_bp.route("/bloqueos/<int:id>", methods=["DELETE"])
+def eliminar_bloqueo(id):
+    resultado, codigo = bloqueos.borrar_bloqueo(id)
+    if resultado is None:
+        return "", codigo
+
+    return jsonify(resultado), codigo

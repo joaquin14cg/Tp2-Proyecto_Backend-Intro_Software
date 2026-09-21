@@ -1,9 +1,10 @@
 from flask import Blueprint, request, jsonify
-from repositories import bloqueos
+from repositories import bloqueos as bloqueos_repo
+from utils import construir_error_api
 
 def obtener_bloqueos():
 
-    bloqueos_db = bloqueos.obtener_bloqueos()
+    bloqueos_db = bloqueos_repo.obtener_bloqueos()
 
     resultados = []
 
@@ -18,3 +19,14 @@ def obtener_bloqueos():
         })
 
     return resultados
+
+
+def borrar_bloqueo(id):
+    bloqueo = bloqueos_repo.obtener_bloqueo_por_id(id)
+
+    if bloqueo is None:
+        return construir_error_api("BLOQUEO_NO_ENCONTRADO", "No existe un bloqueo con ese id", ""), 404
+
+    bloqueos_repo.eliminar_bloqueo_db(id)
+
+    return None, 204
