@@ -1,6 +1,11 @@
 from .. import db
-from ..repositories import socios as socios_db
-from ..validators import socios as validador_socios
+from repositories.socios import existe_socio_con_email
+from validators.socios import (
+    validar_nombre_o_apellido,
+    validar_email
+    )
+from utils import (construir_error_api, validar_string_no_vacio)
+from constants import ERROR_CODE_SOCIO_EXISTS, ERROR_CODE_SOCIO_NOT_FOUND
 
 
 def construir_socio_dto(socio:dict)->dict:
@@ -23,16 +28,24 @@ def buscar_socio_por_id(id_socio: int)->dict:
     return construir_socio_dto(socio)
 
 
+
+
+def validar_email_disponible(email: str)->None:
+    if existe_socio_con_email(email):
+        raise ValueError(construir_error_api(
+            code=ERROR_CODE_SOCIO_EXISTS,
+            message='El socio ya existe',
+            description=f"Ya existe un socio registrado con el email '{email}'"
+        ), 409)
     
-def editar_socio(id_socio: int, socio:dict)->dict:
 
 
-def crear_socio(nuevo_socio:dict)->dict:
-    validador_socios.validar_socio(nuevo_socio)
+def crear_socio(body:dict)->dict:
+    datos = validador_socios(body)
+    
     email = nuevo_socio.get('email')
-    if socios_db.validar_email_disponible(email) == False:
-        return  
-    validar_email_disponible(datos['email'])
+    if validar_email_disponible(email) == False:
+        return validar_email_disponible(nuevo_socio['email'])
 
     
     

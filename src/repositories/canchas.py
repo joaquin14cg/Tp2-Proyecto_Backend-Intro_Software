@@ -10,3 +10,29 @@ def obtener_todas_las_canchas() -> list:
 
     return canchas
     
+def obtener_cancha_por_id(id_cancha: int):
+    conexion = obtener_conexion()
+    cursor = conexion.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM canchas WHERE id = %s", (id_cancha,))
+    cancha = cursor.fetchone()
+    cursor.close()
+    conexion.close()
+    return cancha
+
+def tiene_reservas(id_cancha: int) -> bool:
+    conexion = obtener_conexion()
+    cursor = conexion.cursor()
+    cursor.execute("SELECT 1 FROM reservas WHERE cancha_id = %s LIMIT 1",(id_cancha,))
+    reserva = cursor.fetchone()
+    cursor.close()
+    conexion.close()
+
+    return reserva is not None
+
+def eliminar_cancha(id_cancha: int):
+    conexion = obtener_conexion()
+    cursor = conexion.cursor()
+    cursor.execute("DELETE FROM canchas WHERE id = %s",(id_cancha,))
+    conexion.commit()
+    cursor.close()
+    conexion.close()
