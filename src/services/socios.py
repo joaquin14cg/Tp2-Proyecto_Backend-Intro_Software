@@ -1,11 +1,15 @@
-from .. import db
-from repositories.socios import existe_socio_con_email
-from validators.socios import (
+from db import obtener_conexion
+from src.repositories.socios import existe_socio_con_email
+from src.validators.socios import (
     validar_nombre_o_apellido,
-    validar_email
+    validar_email,
+    validar_body_socio
     )
 from utils import (construir_error_api, validar_string_no_vacio)
-from constants import ERROR_CODE_SOCIO_EXISTS, ERROR_CODE_SOCIO_NOT_FOUND
+from constants import (
+    ERROR_CODE_SOCIO_EXISTS,
+    ERROR_CODE_SOCIO_NOT_FOUND
+    )
 
 
 def construir_socio_dto(socio:dict)->dict:
@@ -41,11 +45,11 @@ def validar_email_disponible(email: str)->None:
 
 
 def crear_socio(body:dict)->dict:
-    datos = validador_socios(body)
+    datos = validar_body_socio(body)
+    validar_email_disponible(datos['email'])
     
-    email = nuevo_socio.get('email')
-    if validar_email_disponible(email) == False:
-        return validar_email_disponible(nuevo_socio['email'])
+    return construir_socio_dto(body)
+    
 
     
     

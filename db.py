@@ -11,3 +11,15 @@ def obtener_conexion():
     )
 
     return conexion
+
+def ejecutar_mutacion(sql:str, parametros:tuple = None)->int:
+    conexion = obtener_conexion()
+    cursor = conexion.cursor()
+    try:
+        cursor.execute(sql, parametros or ())
+        conexion.commit()
+        ultimo_id = cursor.lastwrid
+        return ultimo_id
+    finally:
+        cursor.close()
+        conexion.close()

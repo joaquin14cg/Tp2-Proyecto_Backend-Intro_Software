@@ -1,5 +1,7 @@
-from db import obtener_conexion
-
+from db import (
+    obtener_conexion,
+    ejecutar_mutacion
+    )
 
 
 def existe_socio_con_email(email:str)->bool:
@@ -9,3 +11,9 @@ def existe_socio_con_email(email:str)->bool:
     resultado = cursor.fetchone()
     cursor.close()
     return resultado is not None
+
+def guardar_socio(datos:dict)->dict:
+    query = "INSERT INTO socios (nombre , emaill, activo) values (%s, %s, %s)"
+    valores = (datos['nombre'], datos['email'], datos['activo'])
+    datos['id'] = ejecutar_mutacion(query, valores)
+    return datos

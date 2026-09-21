@@ -1,20 +1,12 @@
-from .. import db
+from db import obtener_conexion
 import re
 from utils import construir_error_api, validar_string_no_vacio
 from constants import (
     CAMPOS_SOCIO,
     PATRON_EMAIL,
-    PATRON_NOMBRE
+    PATRON_NOMBRE,
+    ERROR_CODE_INVALID_BODY
 )
-
-def construir_socio_dto(socio:dict)->dict:
-    return {
-        'id':       socio['id'],
-        'nombre':   socio['nombre'],
-        'email':    socio['email'],
-        'activo':   socio['activo']
-    }
-
 
 def validar_email(email)->str:
     email = validar_string_no_vacio(email, 'email')
@@ -35,11 +27,28 @@ def validar_nombre_o_apellido(valor, nombre_campo: str)->str:
             description= f"El formato '{nombre_campo}' solo puede contener letras y espacios simples entre palabras"
         ))
     return valor
-        
+
+VALIDADORES_CAMPO = {
+    'nombre': lambda valor: validar_nombre_o_apellido(valor, 'nombre'),
+    'email': validar_email,
+}   
+
 def validar_body_socio(body:dict)->dict:
     if body is None:
         raise ValueError(construir_error_api(
-            code='invalid.body',
+            code='ERROR_CODE_INVALID_BODY',
             message='Cuerpo de la solicitud invalido',
             description='El cuerpo de la solicitud debe ser un JSON valido con Content-Type aplication/json'
         ))    
+    errores = []
+    datos = {}
+
+    for campo in CAMPOS_SOCIO:
+        try:
+            datos[campo] = VALIDADORES_CAMPO[campo](body.get(campo))
+        except ValueError as e:
+            errores.extend(e.args[0]['errors'])
+    if errores:
+        raise ValueError({'errors': errores})
+    datos['activo'] = True
+    return datos
