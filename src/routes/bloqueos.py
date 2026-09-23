@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 
-from services import bloqueos
+from src.services import bloqueos
 
 
 

@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
-from services.canchas import listar_canchas, borrar_cancha, obtener_cancha, modificar_cancha
-from services.canchas import crear_cancha as service_crear_cancha
+from src.services.canchas import listar_canchas, borrar_cancha, obtener_cancha, modificar_cancha
+from src.services.canchas import crear_cancha as service_crear_cancha
 
 canchas_bp = Blueprint('canchas', __name__)
 

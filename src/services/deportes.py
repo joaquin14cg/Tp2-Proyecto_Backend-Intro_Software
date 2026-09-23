@@ -1,4 +1,4 @@
-from repositories.deportes import obtener_todos_los_deportes
+from src.repositories.deportes import obtener_todos_los_deportes
 
 def construir_deportes_dto(deporte: dict) -> dict:
     return {

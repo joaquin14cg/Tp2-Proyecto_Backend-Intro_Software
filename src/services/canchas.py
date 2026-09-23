@@ -1,15 +1,15 @@
-from repositories.canchas import crear_cancha as repo_crear_cancha
-from repositories.canchas import obtener_todas_las_canchas
-from repositories.canchas import (
+from src.repositories.canchas import crear_cancha as repo_crear_cancha
+from src.repositories.canchas import obtener_todas_las_canchas
+from src.repositories.canchas import (
     obtener_cancha_por_id,
     tiene_reservas,
     eliminar_cancha,
     actualizar_cancha
 )
-from repositores.deportes import obtener_deporte_por_id
+from src.repositories.deportes import obtener_deporte_por_id
 from utils import construir_error_api
 from constants import MIN_ID
-from validators.canchas import validar_post_cancha, validar_patch_cancha
+from src.validators.canchas import validar_post_cancha, validar_patch_cancha
 
 def construir_cancha_dto(cancha: dict) -> dict:
     return { 
@@ -47,7 +47,7 @@ def crear_cancha(body: dict) -> dict:
 
 def obtener_cancha(id_cancha: int) -> dict | None:
     cancha_db = obtener_cancha_por_id(id_cancha)
-    if cancha_db = None:
+    if cancha_db == None:
         return None
     return construir_cancha_dto(cancha_db)
 

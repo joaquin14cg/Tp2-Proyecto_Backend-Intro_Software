@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from services.reservas import crear_reserva, obtener_reserva, cambiar_estado_reserva, listar_reservas
+from src.services.reservas import crear_reserva, obtener_reserva, cambiar_estado_reserva, listar_reservas
 
 reservas_bp = Blueprint('reservas', __name__)
 

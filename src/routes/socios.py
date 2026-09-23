@@ -19,7 +19,7 @@ def get_socios():
     respuesta = construir_respuesta_paginada(
         clave="socios",
         items=socios,
-        total=total
+        total=total,
         limit=limit,
         offset=offset,
         ruta_base="/socios"

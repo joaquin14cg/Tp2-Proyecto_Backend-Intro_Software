@@ -1,7 +1,8 @@
-from repositories import bloqueos as bloqueos_repo
-from validators.bloqueos import validar_bloqueo
+from src.repositories import bloqueos as bloqueos_repo
+from src.validators.bloqueos import validar_bloqueo
+from src.repositories import reservas as reservas_repo
 from utils import construir_error_api
-from repositories import reservas as reservas_repo
+
 
 
 def obtener_bloqueos():
