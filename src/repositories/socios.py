@@ -47,3 +47,8 @@ def contar_total_socios(nombre: str = None, activo:bool = None )->int:
     resultado = ejecutar_consulta(sql, params, fetch_one = True)
     return resultado['total'] if resultado else 0
 
+
+def obtener_socio_por_id(id_socio: int) -> dict:
+    sql = "SELECT id, nombre, email, activo FROM socios WHERE id = %s"
+    filas = ejecutar_consulta(sql, (id_socio,))
+    return filas[0] if filas else None
