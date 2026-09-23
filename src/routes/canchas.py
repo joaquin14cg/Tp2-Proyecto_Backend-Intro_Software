@@ -18,7 +18,7 @@ def obtener_cancha_por_id_route(id_cancha: int):
 
 @canchas_bp.route('/canchas', methods=['POST'])
 def post_cancha():
-    try
+    try:
         body = request.get_json()
         nueva_cancha = service_crear_cancha(body)
         return jsonify(nueva_cancha), 201

@@ -1,11 +1,9 @@
-from flask import Blueprint, request, jsonify
 from repositories import bloqueos as bloqueos_repo
+from validators.bloqueos import validar_bloqueo
 from utils import construir_error_api
 
 def obtener_bloqueos():
-
     bloqueos_db = bloqueos_repo.obtener_bloqueos()
-
     resultados = []
 
     for bloqueo in bloqueos_db:
@@ -19,6 +17,14 @@ def obtener_bloqueos():
         })
 
     return resultados
+
+def crear_bloqueo(bloqueo_data):
+    es_valido, mensaje = validar_bloqueo(bloqueo_data)
+
+    if not es_valido:
+        return construir_error_api("DATOS_INVALIDOS", mensaje, ""), 400
+
+    bloqueos_repo.crear_bloqueo(bloqueo_data)
 
 
 def borrar_bloqueo(id):
