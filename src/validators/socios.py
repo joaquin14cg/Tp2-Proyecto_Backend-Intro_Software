@@ -1,16 +1,10 @@
-from db import obtener_conexion
 import re
 from utils import construir_error_api, validar_string_no_vacio
-from constants import (
-    CAMPOS_SOCIO,
-    PATRON_EMAIL,
-    PATRON_NOMBRE,
-    ERROR_CODE_INVALID_BODY
-)
+import constants as constants_socios
 
 def validar_email(email)->str:
     email = validar_string_no_vacio(email, 'email')
-    if not re.match(PATRON_EMAIL, email):
+    if not re.match(constants_socios.PATRON_EMAIL, email):
         raise ValueError(construir_error_api(
             code = 'invalid.email.format',
             message = "Formato de email invalido",
@@ -20,7 +14,7 @@ def validar_email(email)->str:
 
 def validar_nombre_o_apellido(valor, nombre_campo: str)->str:
     valor = validar_string_no_vacio(valor, nombre_campo)
-    if not re.match(PATRON_NOMBRE, valor):
+    if not re.match(constants_socios.PATRON_NOMBRE, valor):
         raise ValueError(construir_error_api(
             code= f'invalid.{nombre_campo}.format',
             message= f"Formato de '{nombre_campo}' invalido",
@@ -43,7 +37,7 @@ def validar_body_socio(body:dict)->dict:
     errores = []
     datos = {}
 
-    for campo in CAMPOS_SOCIO:
+    for campo in constants_socios.CAMPOS_SOCIO:
         try:
             datos[campo] = VALIDADORES_CAMPO[campo](body.get(campo))
         except ValueError as e:
@@ -52,3 +46,6 @@ def validar_body_socio(body:dict)->dict:
         raise ValueError({'errors': errores})
     datos['activo'] = True
     return datos
+
+def validar_id_socio(id_str)->int:
+    return validar_minimo(validar_entero(id_str, 'id'), constants_socios.MIN_ID, 'id')

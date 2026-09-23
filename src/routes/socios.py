@@ -19,7 +19,7 @@ def get_socios():
     respuesta = construir_respuesta_paginada(
         clave="socios",
         items=socios,
-        total=total
+        total=total,
         limit=limit,
         offset=offset,
         ruta_base="/socios"
@@ -38,3 +38,6 @@ def post_socio():
         return jsonify(e.args[0]),status
     
     return jsonify(socio), 201
+
+@socios_bp.route('/socios<id>', methods=['GET'])
+def get_socio_id(id):

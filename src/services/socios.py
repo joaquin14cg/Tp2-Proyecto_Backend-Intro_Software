@@ -29,9 +29,9 @@ def listar_socios_paginados(limit: int, offset: int, nombre: str = None, activo:
 
 
 def buscar_socio_por_id(id_socio: int)->dict:
-    socio = obtener_socio_por_id(id_socio)
+    socio = socios_repo.obtener_socio_por_id(id_socio)
     if not socio:
-        return {}
+        error = 
 
     return construir_socio_dto(socio)
 
