@@ -20,19 +20,29 @@ def obtener_bloqueos():
 def crear_bloqueo(bloqueo_data):
     conexion = obtener_conexion()
     cursor = conexion.cursor()
-
+    
     cursor.execute("""
-        INSERT INTO bloqueos (cancha_id, fecha_bloqueo, inicio, fin, motivo)
+        INSERT INTO bloqueos
+        (cancha_id, fecha_bloqueo, inicio, fin, motivo)
         VALUES (%s, %s, %s, %s, %s)
-    """, (bloqueo_data['cancha_id'], bloqueo_data['fecha_bloqueo'], bloqueo_data['inicio'], bloqueo_data['fin'], bloqueo_data['motivo']))
+    """, (
+        bloqueo_data['cancha_id'],
+        bloqueo_data['fecha_bloqueo'],
+        bloqueo_data['inicio'],
+        bloqueo_data['fin'],
+        bloqueo_data['motivo']
+    ))
 
     conexion.commit()
 
-    cursor.close()
-    conexion.close(
+    id_bloqueo = cursor.lastrowid
 
-        
-    )
+    cursor.close()
+    conexion.close()
+
+    return id_bloqueo
+
+
 def obtener_bloqueo_por_id(id):
     conexion = obtener_conexion()
     cursor = conexion.cursor(dictionary=True)
