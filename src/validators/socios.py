@@ -49,3 +49,44 @@ def validar_body_socio(body:dict)->dict:
 
 def validar_id_socio(id_str)->int:
     return validar_minimo(validar_entero(id_str, 'id'), constants_socios.MIN_ID, 'id')
+
+
+def validar_patch_socio(body: dict) -> dict:
+    if body is None:
+        raise ValueError(construir_error_api(
+            code=constants_socios.ERROR_CODE_INVALID_BODY,
+            message='Cuerpo de la solicitud invalido',
+            description='El cuerpo de la solicitud debe ser un JSON valido'
+        ))
+
+    if not body:
+        raise ValueError(construir_error_api(
+            code=constants_socios.ERROR_CODE_INVALID_BODY,
+            message='Cuerpo de la solicitud invalido',
+            description='Debe enviarse al menos un campo para actualizar'
+        ))
+
+    errores = []
+    datos = {}
+
+    for campo, valor in body.items():
+        try:
+            if campo in VALIDADORES_CAMPO:
+                datos[campo] = VALIDADORES_CAMPO[campo](valor)
+
+            elif campo == 'activo':
+                datos[campo] = valor
+
+            else:
+                errores.append({
+                    'code': constants_socios.ERROR_CODE_INVALID_PARAMETER,
+                    'message': f"El campo '{campo}' no puede ser actualizado"
+                })
+
+        except ValueError as e:
+            errores.extend(e.args[0]['errors'])
+
+    if errores:
+        raise ValueError({'errors': errores})
+
+    return datos

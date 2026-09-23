@@ -39,5 +39,28 @@ def post_socio():
     
     return jsonify(socio), 201
 
-@socios_bp.route('/socios<id>', methods=['GET'])
+@socios_bp.route('/socios/<id>', methods=['GET'])
 def get_socio_id(id):
+    pass    
+
+@socios_bp.route('/socios/<id>', methods=['PATCH'])
+def actualizar_socio(id):
+    # silent=True evita que Flask genere automáticamente un error
+    # cuando el body no contiene un JSON válido.
+    body = request.get_json(silent=True)
+    if body is None:
+        return error_body_invalido()
+    try:
+        socio_actualizado = socios_services.actualizar_socio(id, body)
+    except ValueError as e:
+        mensaje_error = e.args[0]
+        # Si el service no proporciona un código HTTP, usamos 400 como valor por defecto.
+        if len(e.args) > 1:
+            codigo_error = e.args[1]
+        else:
+            codigo_error = 400
+
+        return jsonify(mensaje_error), codigo_error
+
+    # Devuelve el socio actualizado
+    return jsonify(socio_actualizado), 200

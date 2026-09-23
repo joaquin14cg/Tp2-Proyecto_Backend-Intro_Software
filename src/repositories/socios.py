@@ -51,3 +51,23 @@ def obtener_socio_por_id(id_socio: int) -> dict:
     sql = "SELECT id, nombre, email, activo FROM socios WHERE id = %s"
     filas = ejecutar_consulta(sql, (id_socio,))
     return filas[0] if filas else None
+
+def actualizar_socio(id_socio: int, datos: dict) -> dict:
+    campos = []
+    valores = []
+
+    for campo, valor in datos.items():
+        campos.append(f"{campo} = %s")
+        valores.append(valor)
+
+    valores.append(id_socio)
+
+    sql = f"""
+        UPDATE socios
+        SET {', '.join(campos)}
+        WHERE id = %s
+    """
+
+    ejecutar_mutacion(sql, valores)
+
+    return obtener_socio_por_id(id_socio)
