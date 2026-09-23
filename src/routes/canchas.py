@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
 from services.canchas import listar_canchas, borrar_cancha, obtener_cancha, modificar_cancha
+from services.canchas import crear_cancha as service_crear_cancha
 
 canchas_bp = Blueprint('canchas', __name__)
 
@@ -14,6 +15,16 @@ def obtener_cancha_por_id_route(id_cancha: int):
     if cancha is None:
         return jsonify({'mensaje': 'Cancha no encontrada'}), 404
     return jsonify(cancha), 200
+
+@canchas_bp.route('/canchas', methods=['POST'])
+def post_cancha():
+    try
+        body = request.get_json()
+        nueva_cancha = service_crear_cancha(body)
+        return jsonify(nueva_cancha), 201
+    except ValueError as error:
+        payload, status_code = error.args
+        return jsonify(payload), status_code
 
 @canchas_bp.route('/canchas/<int:id_cancha>', methods=['DELETE'])
 def eliminar_cancha_route(id_cancha):

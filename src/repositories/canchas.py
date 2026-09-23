@@ -9,6 +9,18 @@ def obtener_todas_las_canchas() -> list:
     conexion.close()
 
     return canchas
+
+def crear_cancha(nombre: str, id_deporte: int, precio_hora: int, techada: bool, activa: bool) -> int:
+    conexion = obtener_conexion()
+    cursor = conexion.cursor()
+    consulta = "INSERT INTO canchas (nombre, id_deporte, precio_hora, techada, activa) VALUES (%s, %s, %s, %s, %s)"
+    cursor.execute(consulta,(nombre, id_deporte, precio_hora, techada, activa))
+    conexion.commit()
+    nuevo_id = cursor.lastrowid
+    cursor.close()
+    conexion.close()
+
+    return nuevo_id
     
 def obtener_cancha_por_id(id_cancha: int):
     conexion = obtener_conexion()
@@ -17,6 +29,7 @@ def obtener_cancha_por_id(id_cancha: int):
     cancha = cursor.fetchone()
     cursor.close()
     conexion.close()
+
     return cancha
 
 def tiene_reservas(id_cancha: int) -> bool:

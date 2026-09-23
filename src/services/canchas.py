@@ -1,3 +1,4 @@
+from repositories.canchas import crear_cancha as repo_crear_cancha
 from repositories.canchas import obtener_todas_las_canchas
 from repositories.canchas import (
     obtener_cancha_por_id,
@@ -5,9 +6,10 @@ from repositories.canchas import (
     eliminar_cancha,
     actualizar_cancha
 )
+from repositores.deportes import obtener_deporte_por_id
 from utils import construir_error_api
 from constants import MIN_ID
-from validators.canchas import validar_patch_cancha
+from validators.canchas import validar_post_cancha, validar_patch_cancha
 
 def construir_cancha_dto(cancha: dict) -> dict:
     return { 
@@ -20,6 +22,28 @@ def construir_cancha_dto(cancha: dict) -> dict:
     }
 def listar_canchas() -> list[dict]:
     return[construir_cancha_dto(c) for c in obtener_todas_las_canchas()]
+
+def crear_cancha(body: dict) -> dict:
+    datos = validar_post_cancha(body)
+    deporte = obtener_deporte_por_id(datos['id_deporte'])
+    if deporte is None:
+        raise ValueError(
+            construir_error_api(
+                code='deporte_not_found',
+                message='Deporte no encontrado',
+                description=f"El deporte con id {datos['id_deporte']} no existe"
+            ),
+            404
+        )
+    nuevo_id = repo_crear_cancha(
+        nombre=datos['nombre'],
+        id_deporte=datos['id_deporte'],
+        precio_hora=datos['precio_hora'],
+        techada=datos['techada'],
+        activa=datos['activa']
+    )
+    datos['id'] = nuevo_id
+    return datos
 
 def obtener_cancha(id_cancha: int) -> dict | None:
     cancha_db = obtener_cancha_por_id(id_cancha)
