@@ -5,7 +5,8 @@ from src.services import socios as socios_services
 socios_bp = Blueprint('socios', __name__)
 
 @socios_bp.route('/socios', methods=['GET'])
-def listar_socios():
+def get_socios():
+    socios = socios_services.listar_socios()
     return jsonify({"mensaje": "Lista de socios funcionando"}), 200
 
 @socios_bp.route('/socios', methods=['POST'])

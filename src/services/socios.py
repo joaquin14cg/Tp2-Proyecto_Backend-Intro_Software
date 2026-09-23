@@ -1,5 +1,5 @@
 from db import obtener_conexion
-from src.repositories.socios import existe_socio_con_email
+from src.repositories import socios as socios_repo
 from src.validators.socios import (
     validar_nombre_o_apellido,
     validar_email,
@@ -20,12 +20,16 @@ def construir_socio_dto(socio:dict)->dict:
         'activo':   socio['activo'],
     }
 
-def listar_socios()->list[dict]:
-    return [construir_socio_dto(s) for s in socios_db.obtener_todos_los_socios()]
+def listar_socios_paginados(limit:int, offset:int)-> tuple[list, dict]:
+    socios_raw = socios_repo.obtener_socios_paginados(limit, offset)
+    total = socios_repo.contar_total_socios()
+    socios = [construir_socio_dto(s) for s in socios_raw]
+    return socios, total
+    
 
 
 def buscar_socio_por_id(id_socio: int)->dict:
-    socio = socios_db.obtener_socio_por_id(id_socio)
+    socio = obtener_socio_por_id(id_socio)
     if not socio:
         return {}
 
@@ -35,7 +39,7 @@ def buscar_socio_por_id(id_socio: int)->dict:
 
 
 def validar_email_disponible(email: str)->None:
-    if existe_socio_con_email(email):
+    if socios_repo.existe_socio_con_email(email):
         raise ValueError(construir_error_api(
             code=ERROR_CODE_SOCIO_EXISTS,
             message='El socio ya existe',
