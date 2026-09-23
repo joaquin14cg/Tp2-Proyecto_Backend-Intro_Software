@@ -1,6 +1,7 @@
 from flask import jsonify
 from constants import (
-    ERROR_CODE_INVALID_BODY
+    ERROR_CODE_INVALID_BODY,
+    ERROR_CODE_INVALID_PARAMETER
 )
 
 LIMIT_DEFAULT = 10
@@ -28,7 +29,7 @@ def validar_string_no_vacio(valor, nombre:str)->str:
 
 def error_body_invalido():
     return jsonify(construir_error_api(
-        code='ERROR_CODE_INVALID_BODY',
+        code=ERROR_CODE_INVALID_BODY,
         message='Cuerpo de la solicitud invalido',
         description='El cuerpo de la solicitud debe ser un JSON valido con Content-Type aplication/json'
     )), 400
@@ -79,3 +80,19 @@ def construir_respuesta_paginada(clave, items, total, limit, offset, ruta_base):
         clave: items,
         "_links": armar_links(total, limit, offset, ruta_base)
     }
+
+def obtener_parametro_booleano(request, nombre_parametro):
+    valor_str = request.args.get(nombre_parametro)
+    if valor_str is None:
+        return None, None
+    valor_lower = valor_str.lower()
+    if valor_lower == 'true':
+        return True, None
+    elif valor_lower == 'false':
+        return False, None
+    else:
+        error = construir_error_api(
+            code=ERROR_CODE_INVALID_PARAMETER,
+            message="Parámetro inválido",
+            description=f"El filtro '{nombre_parametro}' debe ser true o false"
+        )

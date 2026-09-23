@@ -20,9 +20,9 @@ def construir_socio_dto(socio:dict)->dict:
         'activo':   socio['activo'],
     }
 
-def listar_socios_paginados(limit:int, offset:int)-> tuple[list, dict]:
-    socios_raw = socios_repo.obtener_socios_paginados(limit, offset)
-    total = socios_repo.contar_total_socios()
+def listar_socios_paginados(limit: int, offset: int, nombre: str = None, activo: bool = None)-> tuple[list, int]:
+    socios_raw = socios_repo.obtener_socios_paginados(limit, offset, nombre, activo)
+    total = socios_repo.contar_total_socios(nombre, activo)
     socios = [construir_socio_dto(s) for s in socios_raw]
     return socios, total
     
