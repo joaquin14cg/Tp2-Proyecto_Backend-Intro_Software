@@ -32,7 +32,7 @@ def obtener_reserva_route(id_reserva):
 def cambiar_estado_route(id_reserva):
     body = request.get_json(silent=True) or {}
     try:
-        cambiar_estado_reserva(id_reserva, body)
-        return '', 204
+        reserva = cambiar_estado_reserva(id_reserva, body)
+        return jsonify(reserva), 200
     except ValueError as error:
         return jsonify(error.args[0]), error.args[1]
