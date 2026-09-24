@@ -1,12 +1,12 @@
 from flask import jsonify
-from constants import (
-    ERROR_CODE_INVALID_BODY,
-    ERROR_CODE_INVALID_PARAMETER
-)
+import logging
+import constants as const
 
 LIMIT_DEFAULT = 10
 LIMIT_MAX = 100
 OFFSET_DEFAULT = 0
+
+logger = logging.getLogger(__name__)
 
 def construir_error_api(code:str, message:str, description:str, level:str = 'error')->dict:
     return {
@@ -21,15 +21,35 @@ def construir_error_api(code:str, message:str, description:str, level:str = 'err
 def validar_string_no_vacio(valor, nombre:str)->str:
     if not valor or str(valor).strip():
         raise ValueError(construir_error_api(
-            code = f'required.{nombre}',
-            message = f"Campo requerido: '{nombre}'",
-            description = f"El campo '{nombre}' es obligatorio y no puede estar vacio"    
+            code=const.ERROR_CODE_FIELD_REQUIRED.format(nombre),
+            message=f"Campo requerido: '{nombre}'",
+            description=f"El campo '{nombre}' es obligatorio y no puede estar vacio"    
         ))
     return str(valor).strip()
 
+
+def validar_entero(numero, nombre:str = 'numero')->int:
+    if numero is None:
+        raise ValueError(construir_error_api(
+            code=const.ERROR_CODE_INVALID_FORMAT.format(nombre),
+            message=f"Formato de {nombre} invalido",
+            description=f"El valor de {nombre} no puede ser nulo"
+        ))
+    try:
+        return int(numero)
+    except ValueError:
+        logger.warning(f"Valor numerico invalido, {nombre} no puede convertirse a entero")
+        raise ValueError(construir_error_api(
+            code=const.ERROR_CODE_INVALID_FORMAT.format(nombre),
+            message=f"Formato de {nombre} invalido",
+            description=f"El valor {numero} no puede convertirse a un numero entero"
+        ))
+
+
+
 def error_body_invalido():
     return jsonify(construir_error_api(
-        code=ERROR_CODE_INVALID_BODY,
+        code=const.ERROR_CODE_INVALID_BODY,
         message='Cuerpo de la solicitud invalido',
         description='El cuerpo de la solicitud debe ser un JSON valido con Content-Type aplication/json'
     )), 400
@@ -92,7 +112,8 @@ def obtener_parametro_booleano(request, nombre_parametro):
         return False, None
     else:
         error = construir_error_api(
-            code=ERROR_CODE_INVALID_PARAMETER,
+            code=const.ERROR_CODE_INVALID_PARAMETER,
             message="Parámetro inválido",
             description=f"El filtro '{nombre_parametro}' debe ser true o false"
         )
+        return None, error

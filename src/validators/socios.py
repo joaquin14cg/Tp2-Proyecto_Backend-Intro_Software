@@ -1,11 +1,11 @@
 import re
-from utils import construir_error_api, validar_string_no_vacio
+import utils as utils_socios
 import constants as constants_socios
 
 def validar_email(email)->str:
-    email = validar_string_no_vacio(email, 'email')
+    email = utils_socios.validar_string_no_vacio(email, 'email')
     if not re.match(constants_socios.PATRON_EMAIL, email):
-        raise ValueError(construir_error_api(
+        raise ValueError(utils_socios.construir_error_api(
             code = 'invalid.email.format',
             message = "Formato de email invalido",
             description= f"El valor '{email}' no tiene un formato de correo electronico valido "
@@ -13,9 +13,9 @@ def validar_email(email)->str:
     return email
 
 def validar_nombre_o_apellido(valor, nombre_campo: str)->str:
-    valor = validar_string_no_vacio(valor, nombre_campo)
+    valor = utils_socios.validar_string_no_vacio(valor, nombre_campo)
     if not re.match(constants_socios.PATRON_NOMBRE, valor):
-        raise ValueError(construir_error_api(
+        raise ValueError(utils_socios.construir_error_api(
             code= f'invalid.{nombre_campo}.format',
             message= f"Formato de '{nombre_campo}' invalido",
             description= f"El formato '{nombre_campo}' solo puede contener letras y espacios simples entre palabras"
@@ -48,7 +48,7 @@ def validar_body_socio(body:dict)->dict:
     return datos
 
 def validar_id_socio(id_str)->int:
-    return validar_minimo(validar_entero(id_str, 'id'), constants_socios.MIN_ID, 'id')
+    return utils_socios.validar_minimo(utils_socios.validar_entero(id_str, 'id'), constants_socios.MIN_ID, 'id')
 
 
 def validar_patch_socio(body: dict) -> dict:
@@ -60,7 +60,7 @@ def validar_patch_socio(body: dict) -> dict:
         ))
 
     if not body:
-        raise ValueError(construir_error_api(
+        raise ValueError(utils_socios.construir_error_api(
             code=constants_socios.ERROR_CODE_INVALID_BODY,
             message='Cuerpo de la solicitud invalido',
             description='Debe enviarse al menos un campo para actualizar'
