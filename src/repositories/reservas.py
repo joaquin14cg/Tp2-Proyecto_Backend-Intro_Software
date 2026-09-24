@@ -66,10 +66,10 @@ def listar_reservas(filtros, limit, offset):
         condiciones.append("estado = %s")
         params.append(filtros['estado'])
     if filtros.get('fecha_desde'):
-        condiciones.append("inicio >= %s")
+        condiciones.append("DATE(inicio) >= %s")
         params.append(filtros['fecha_desde'])
     if filtros.get('fecha_hasta'):
-        condiciones.append("inicio <= %s")
+        condiciones.append("DATE(inicio) <= %s")
         params.append(filtros['fecha_hasta'])
 
     where = ""
