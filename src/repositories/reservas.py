@@ -18,6 +18,23 @@ def existe_superposicion(id_cancha, id_socio, inicio, fin):
     return resultado is not None
 
 
+def existe_reserva_confirmada_superpuesta(id_cancha, inicio, fin):
+    conexion = obtener_conexion()
+    cursor = conexion.cursor()
+    cursor.execute(
+        """SELECT 1 FROM reservas
+           WHERE estado = 'confirmada'
+             AND cancha_id = %s
+             AND inicio < %s AND fin > %s
+           LIMIT 1""",
+        (id_cancha, fin, inicio)
+    )
+    resultado = cursor.fetchone()
+    cursor.close()
+    conexion.close()
+    return resultado is not None
+
+
 def crear_reserva(id_socio, id_cancha, inicio, fin, tarifa_hora, total):
     conexion = obtener_conexion()
     cursor = conexion.cursor()
