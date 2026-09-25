@@ -108,3 +108,27 @@ def listar_reservas(filtros, limit, offset):
     cursor.close()
     conexion.close()
     return reservas, total
+
+def crear_reservas_en_lote(reservas):
+    conexion = obtener_conexion()
+    cursor = conexion.cursor()
+    ids_creados = []
+
+    try:
+        for reserva in reservas:
+            cursor.execute(
+                """INSERT INTO reservas (socio_id, cancha_id, inicio, fin, estado, tarifa_hora, total)
+                VALUES (%s, %s, %s, %s, 'confirmada', %s, %s)""",
+                (reserva['id_socio'], reserva['id_cancha'], reserva['inicio'], reserva['fin'],
+                reserva['tarifa_hora'], reserva['total'])
+            )
+            ids_creados.append(cursor.lastrowid)
+        conexion.commit()
+    except Exception:
+        conexion.rollback()
+        raise
+    finally:
+        cursor.close()
+        conexion.close()
+
+    return ids_creados

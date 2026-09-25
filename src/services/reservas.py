@@ -4,9 +4,9 @@ from src.repositories.canchas import obtener_cancha_por_id
 from src.repositories.socios import obtener_socio_por_id
 from src.repositories.reservas import (
     existe_superposicion, obtener_reserva_por_id,
-    actualizar_estado, crear_reserva as crear_reserva_db, listar_reservas as listar_reservas_db,
+    actualizar_estado, crear_reserva as crear_reserva_db, listar_reservas as listar_reservas_db, crear_reservas_en_lote,
 )
-from src.validators.reservas import validar_body_reserva, validar_body_estado
+from src.validators.reservas import validar_body_reserva, validar_body_estado, validar_body_reservas_recurrentes
 from utils import construir_error_api
 
 def construir_links(url_base, filtros, limit, offset, total):
@@ -130,3 +130,43 @@ def listar_reservas(query_args, url_base):
         'reservas': reservas_dto,
         '_links': construir_links(url_base, filtros_para_links, limit, offset, total),
     }
+
+def crear_reservas_recurrentes(body):
+    id_socio, id_cancha, intervalos = validar_body_reservas_recurrentes(body)
+
+    cancha = obtener_cancha_por_id(id_cancha)
+    if cancha is None or not cancha['activa']:
+        raise ValueError(construir_error_api(
+            code='cancha.not_found', message='Cancha no encontrada',
+            description=f"No existe una cancha activa con el id {id_cancha}"
+        ), 404)
+
+    socio = obtener_socio_por_id(id_socio)
+    if socio is None or not socio['activo']:
+        raise ValueError(construir_error_api(
+            code='socio.not_found', message='Socio no encontrado',
+            description=f"No existe un socio activo con el id {id_socio}"
+        ), 404)
+
+    fechas_en_conflicto = [
+        inicio.isoformat() for inicio, fin in intervalos
+        if existe_superposicion(id_cancha, id_socio, inicio, fin)
+    ]
+    if fechas_en_conflicto:
+        raise ValueError(construir_error_api(
+            code='reserva.serie_con_conflictos', message='Hay fechas no disponibles',
+            description=f"Conflicto en: {', '.join(fechas_en_conflicto)}"
+        ), 409)
+
+    tarifa_hora = cancha['precio_hora']
+    reservas_a_crear = []
+    for inicio, fin in intervalos:
+        horas = (fin - inicio).total_seconds() / 3600
+        reservas_a_crear.append({
+            'id_socio': id_socio, 'id_cancha': id_cancha,
+            'inicio': inicio, 'fin': fin,
+            'tarifa_hora': tarifa_hora, 'total': int(tarifa_hora * horas)
+        })
+
+    ids_creados = crear_reservas_en_lote(reservas_a_crear)
+    return [construir_reserva_dto(obtener_reserva_por_id(id_reserva)) for id_reserva in ids_creados]
