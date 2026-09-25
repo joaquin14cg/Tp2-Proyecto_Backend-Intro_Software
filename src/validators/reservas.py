@@ -42,6 +42,13 @@ def validar_body_reserva(body):
             description="fecha_hora_inicio tiene que ser menor a fecha_hora_fin"
         ), 400)
 
+    if inicio.date() != fin.date():
+        raise ValueError(construir_error_api(
+            code='reserva.atraviesa_medianoche',
+            message='La reserva no puede atravesar la medianoche',
+            description="fecha_hora_inicio y fecha_hora_fin deben ser del mismo día"
+        ), 400)
+
     duracion_horas = (fin - inicio).total_seconds() / 3600
     if duracion_horas < 1 or duracion_horas > 3:
         raise ValueError(construir_error_api(
