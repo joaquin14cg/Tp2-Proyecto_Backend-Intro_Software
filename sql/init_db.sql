@@ -23,10 +23,10 @@ CREATE TABLE canchas (
     nombre VARCHAR(100) NOT NULL,
     deporte_id INT NOT NULL,
     precio_hora INT NOT NULL,
-    techada BOOLEAN NOT NULL DEFAULT FALSE, --booleano obliga que sea TRUE o FALSE y por defecto es FALSE
+    techada BOOLEAN NOT NULL DEFAULT FALSE, -- booleano obliga que sea TRUE o FALSE y por defecto es FALSE
     activa BOOLEAN NOT NULL DEFAULT TRUE,
 
-    FOREIGN KEY (deporte_id) REFERENCES deportes(id) --FOREIGN KEY establece una relación entre la tabla canchas y deportes. Hay siempre un valor numero para un id
+    FOREIGN KEY (deporte_id) REFERENCES deportes(id) -- FOREIGN KEY establece una relación entre la tabla canchas y deportes. Hay siempre un valor numero para un id
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE socios (
@@ -42,7 +42,7 @@ CREATE TABLE reservas (
     socio_id INT NOT NULL,
     cancha_id INT NOT NULL,
 
-    inicio DATETIME(6) NOT NULL, --YYYY-MM-DD HH:MM:SS
+    inicio DATETIME(6) NOT NULL, -- YYYY-MM-DD HH:MM:SS
     fin DATETIME(6) NOT NULL,
 
     estado VARCHAR(20) NOT NULL DEFAULT 'confirmada',
@@ -78,3 +78,7 @@ VALUES
     ('Santiago', 'santiago@example.com', TRUE),
     ('Juan', 'juan@example.com', TRUE),
     ('Pedro', 'pedro@example.com', TRUE);
+
+INSERT INTO reservas (socio_id, cancha_id, inicio, fin, estado, tarifa_hora, total)
+VALUES
+(1,1, '2026-09-10 18:00:00', '2026-09-10 22:00:00', "confirmada", 1000000, 2000000);
