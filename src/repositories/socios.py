@@ -24,27 +24,31 @@ def obtener_socios_paginados(limit:int, offset:int, nombre: str = None, activo :
     sql = 'SELECT id, nombre, email, activo FROM socios WHERE 1=1'
     params = []
     if nombre is not None:
-        sql += 'AND LOWER(nombre) LIKE LOWER(%s)'
+        sql += ' AND LOWER(nombre) LIKE LOWER(%s)'
         params.append(f"%{nombre}%")
     if activo is not None:
         sql += 'AND activo = %s'
         params.append(activo)    
-    sql += 'ORDER BY id ASC LIMIT %s OFFSET %s'
+    sql += ' ORDER BY id ASC LIMIT %s OFFSET %s'
     params.extend([limit, offset])
-    return ejecutar_consulta(sql, params, fetch_all=True)
+    return ejecutar_consulta(sql, params)
 
 
-def contar_total_socios(nombre: str = None, activo:bool = None )->int:
+def contar_total_socios(nombre: str = None, activo: bool = None) -> int:
     sql = 'SELECT COUNT(*) AS total FROM socios WHERE 1=1'
     params = []
+
     if nombre is not None:
-        sql += 'AND LOWER(nombre) LIKE LOWER(%s)'
+        sql += ' AND LOWER(nombre) LIKE LOWER(%s)'
         params.append(f"%{nombre}%")
+
     if activo is not None:
-        sql += 'AND activo = %s'
+        sql += ' AND activo = %s'
         params.append(activo)
-    resultado = ejecutar_consulta(sql, params, fetch_one = True)
-    return resultado['total'] if resultado else 0
+
+    resultado = ejecutar_consulta(sql, params)
+
+    return resultado[0]['total'] if resultado else 0
 
 
 def obtener_socio_por_id(id_socio: int) -> dict:

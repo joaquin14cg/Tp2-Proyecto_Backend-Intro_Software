@@ -10,6 +10,9 @@ load_dotenv()
 
 app = Flask(__name__)
 
+
+app.json.ensure_ascii = False #esto sirve para que tome tildes como caracteres
+
 app.register_blueprint(socios_bp)
 app.register_blueprint(canchas_bp)
 app.register_blueprint(reservas_bp)
