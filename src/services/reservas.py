@@ -95,7 +95,7 @@ def cambiar_estado_reserva(id_reserva, body):
         ), 404)
 
     if nuevo_estado == reserva['estado']:
-        return
+        return construir_reserva_dto(reserva)
 
     if not es_transicion_valida(reserva['estado'], nuevo_estado, reserva):
         raise ValueError(construir_error_api(
@@ -104,6 +104,7 @@ def cambiar_estado_reserva(id_reserva, body):
         ), 409)
 
     actualizar_estado(id_reserva, nuevo_estado)
+    return construir_reserva_dto(obtener_reserva_por_id(id_reserva))
 
 def listar_reservas(query_args, url_base):
     limit = int(query_args.get('_limit', 10))
