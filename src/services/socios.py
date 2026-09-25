@@ -1,16 +1,12 @@
 from db import obtener_conexion
 from src.repositories import socios as socios_repo
 from src.validators.socios import (
-    validar_nombre_o_apellido,
-    validar_email,
     validar_body_socio,
-    validar_patch_socio
+    validar_patch_socio,
+    validar_id_socio
     )
-from utils import (construir_error_api, validar_string_no_vacio)
-from constants import (
-    ERROR_CODE_SOCIO_EXISTS,
-    ERROR_CODE_SOCIO_NOT_FOUND
-    )
+import utils as ut
+import constants as const
 
 
 def construir_socio_dto(socio:dict)->dict:
@@ -29,11 +25,15 @@ def listar_socios_paginados(limit: int, offset: int, nombre: str = None, activo:
     
 
 
-def buscar_socio_por_id(id_socio: int)->dict:
-    socio = socios_repo.obtener_socio_por_id(id_socio)
+def buscar_socio_por_id(id_str: int)->dict:
+    socio_id = validar_id_socio(id_str)
+    socio = socios_repo.obtener_socio_por_id(socio_id)
     if not socio:
-        error = ""
-
+        raise ValueError(ut.construir_error_api(
+            code=const.ERROR_CODE_SOCIO_NOT_FOUND,
+            message='Socio no encontrado',
+            description=f"No se encontro un socio registrado con el ID {socio_id}"
+        ))
     return construir_socio_dto(socio)
 
 
@@ -41,8 +41,8 @@ def buscar_socio_por_id(id_socio: int)->dict:
 
 def validar_email_disponible(email: str)->None:
     if socios_repo.existe_socio_con_email(email):
-        raise ValueError(construir_error_api(
-            code=ERROR_CODE_SOCIO_EXISTS,
+        raise ValueError(ut.construir_error_api(
+            code=const.ERROR_CODE_SOCIO_EXISTS,
             message='El socio ya existe',
             description=f"Ya existe un socio registrado con el email '{email}'"
         ), 409)
@@ -59,8 +59,8 @@ def actualizar_socio(id_socio: int, body: dict) -> dict:
     socio = socios_repo.obtener_socio_por_id(id_socio)
 
     if not socio:
-        raise ValueError(construir_error_api(
-            code=ERROR_CODE_SOCIO_NOT_FOUND,
+        raise ValueError(ut.construir_error_api(
+            code=const.ERROR_CODE_SOCIO_NOT_FOUND,
             message='Socio no encontrado',
             description=f"No se encontró un socio con el id '{id_socio}'"
         ), 404)

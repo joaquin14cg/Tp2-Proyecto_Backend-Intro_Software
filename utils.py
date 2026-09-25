@@ -45,6 +45,16 @@ def validar_entero(numero, nombre:str = 'numero')->int:
             description=f"El valor {numero} no puede convertirse a un numero entero"
         ))
 
+def validar_minimo(valor: int, minimo: int, nombre:str)->int:
+    if valor < minimo:
+        logger.warning(f"Valor por debajo del minimo: '{nombre}' es {valor}, minimo esperado {minimo}")
+
+        raise ValueError(construir_error_api(
+            code=const.ERROR_CODE_INVALID_MIN,
+            message='Valor por debajo del minimo permitido',
+            description=f"El parametro '{nombre}' debe ser mayor o igual a {minimo}. Se recibio {valor}"
+        ))
+    return valor
 
 
 def error_body_invalido():
@@ -53,6 +63,14 @@ def error_body_invalido():
         message='Cuerpo de la solicitud invalido',
         description='El cuerpo de la solicitud debe ser un JSON valido con Content-Type aplication/json'
     )), 400
+
+def error_socio_no_encontrado(id_socio):
+    return jsonify(construir_error_api(
+        code=const.ERROR_CODE_SOCIO_NOT_FOUND,
+        message='Socio no encontrado',
+        description=f"No existe socio registrado con el ID '{id_socio}'"
+    )), 404
+
 
 def obtener_parametros_paginacion(request):
     limit_str = request.args.get("_limit", str(LIMIT_DEFAULT))

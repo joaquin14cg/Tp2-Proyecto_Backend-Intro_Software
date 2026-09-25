@@ -1,22 +1,19 @@
 from flask import Blueprint, jsonify, request
-from utils import (
-    error_body_invalido,
-    obtener_parametros_paginacion,
-    construir_respuesta_paginada)
+import utils as ut
 from src.services import socios as socios_services
 
 socios_bp = Blueprint('socios', __name__)
 
 @socios_bp.route('/socios', methods=['GET'])
 def get_socios():
-    limit, offset, error = obtener_parametros_paginacion(request)
+    limit, offset, error = ut.obtener_parametros_paginacion(request)
     if error:
         return jsonify(error), 400
     nombre = request.args.get('nombre', type=str)
     activo = request.args.get('activo')
     
     socios, total = socios_services.listar_socios_paginados(limit, offset, nombre, activo)
-    respuesta = construir_respuesta_paginada(
+    respuesta = ut.construir_respuesta_paginada(
         clave="socios",
         items=socios,
         total=total,
@@ -30,7 +27,7 @@ def get_socios():
 def post_socio():
     body = request.get_json(silent=True)
     if body is None:
-        return error_body_invalido()
+        return ut.error_body_invalido()
     try:
         socio = socios_services.crear_socio(body)
     except ValueError as e:
@@ -41,7 +38,14 @@ def post_socio():
 
 @socios_bp.route('/socios/<id>', methods=['GET'])
 def get_socio_id(id):
-    pass    
+    try:
+        id_socio = socios_services.validar_id_socio(id) 
+    except ValueError as e:
+        return jsonify(e.args[0]), 400
+    socio = socios_services.buscar_socio_por_id(id_socio)
+    if not socio:
+        return ut.error_socio_no_encontrado(id_socio)
+    return jsonify(socio)
 
 @socios_bp.route('/socios/<id>', methods=['PATCH'])
 def actualizar_socio(id):
@@ -49,7 +53,7 @@ def actualizar_socio(id):
     # cuando el body no contiene un JSON válido.
     body = request.get_json(silent=True)
     if body is None:
-        return error_body_invalido()
+        return ut.error_body_invalido()
     try:
         socio_actualizado = socios_services.actualizar_socio(id, body)
     except ValueError as e:
