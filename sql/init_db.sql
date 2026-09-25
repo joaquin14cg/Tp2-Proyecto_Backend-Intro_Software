@@ -81,4 +81,4 @@ VALUES
 
 INSERT INTO reservas (socio_id, cancha_id, inicio, fin, estado, tarifa_hora, total)
 VALUES
-(1,1, '2026-09-10 18:00:00', '2026-09-10 22:00:00', "confirmada", 1000000, 2000000);
+(1,1, '2026-09-15 10:00:00.000000', '2026-09-15 12:00:00.000000', "confirmada", 1000000, 2000000);
