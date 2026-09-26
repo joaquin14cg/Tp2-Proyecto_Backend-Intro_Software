@@ -6,6 +6,7 @@ from src.repositories.reservas import (
     existe_superposicion, obtener_reserva_por_id,
     actualizar_estado, crear_reserva as crear_reserva_db, listar_reservas as listar_reservas_db, crear_reservas_en_lote,
 )
+from src.repositories.bloqueos import existe_bloqueo_superpuesto
 from src.validators.reservas import validar_body_reserva, validar_body_estado, validar_body_reservas_recurrentes
 from utils import construir_error_api
 
@@ -59,6 +60,12 @@ def crear_reserva(body):
         raise ValueError(construir_error_api(
             code='reserva.conflicto_horario', message='Horario no disponible',
             description='La cancha o el socio ya tienen una reserva en ese horario'
+        ), 409)
+
+    if existe_bloqueo_superpuesto(datos['id_cancha'], datos['inicio'], datos['fin']):
+        raise ValueError(construir_error_api(
+            code = 'reserva.horario_bloqueado', message='Horario no disponible',
+            description='La cancha tiene un bloqueo por mantenimiento en ese horario'
         ), 409)
 
     horas = (datos['fin'] - datos['inicio']).total_seconds() / 3600
