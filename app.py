@@ -1,4 +1,7 @@
 from dotenv import load_dotenv
+
+load_dotenv()
+
 from flask import Flask
 from src.routes.socios import socios_bp
 from src.routes.canchas import canchas_bp
@@ -6,12 +9,11 @@ from src.routes.reservas import reservas_bp
 from src.routes.bloqueos import bloqueos_bp
 from src.routes.deportes import deportes_bp
 from db import obtener_conexion
-load_dotenv()
+
 
 app = Flask(__name__)
 
-
-app.json.ensure_ascii = False #esto sirve para que tome tildes como caracteres
+app.json.ensure_ascii = False
 
 
 app.register_blueprint(deportes_bp)
