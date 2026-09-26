@@ -13,7 +13,7 @@ def obtener_deporte_por_id(id_deporte: int):
     conexion = obtener_conexion()
     cursor = conexion.cursor(dictionary=True)
     cursor.execute("SELECT * FROM deportes WHERE id = %s",(id_deporte,))
-    deporte = cursor.fetone()
+    deporte = cursor.fetchone()
     cursor.close()
     conexion.close()
     return deporte
