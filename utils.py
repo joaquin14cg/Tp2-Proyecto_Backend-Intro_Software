@@ -11,10 +11,10 @@ logger = logging.getLogger(__name__)
 def construir_error_api(code:str, message:str, description:str, level:str = 'error')->dict:
     return {
         'errors' : [{
-            code:'code',
-            message:'message',
-            level:'error',
-            description:'description'          
+            'error':level,
+            'code': code,
+            'message':message,
+            'description':description         
         }]
     }
 

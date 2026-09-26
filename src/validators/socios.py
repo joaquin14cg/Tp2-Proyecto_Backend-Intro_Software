@@ -32,7 +32,7 @@ def validar_body_socio(body:dict)->dict:
         raise ValueError(ut.construir_error_api(
             code='ERROR_CODE_INVALID_BODY',
             message='Cuerpo de la solicitud invalido',
-            description='El cuerpo de la solicitud debe ser un JSON valido con Content-Type aplication/json'
+            description='El cuerpo de la solicitud debe ser un JSON valido con Content-Type application/json'
         ))    
     errores = []
     datos = {}
