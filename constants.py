@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 
-load_dotenv
+load_dotenv()
 
 MIN_ID = 1
 
@@ -15,6 +15,6 @@ ERROR_CODE_SOCIO_NOT_FOUND = 'socio.not.found'
 ERROR_CODE_SOCIO_EXISTS = 'socio.already.exists'
 ERROR_CODE_INVALID_BODY = 'invalid.body'
 ERROR_CODE_INVALID_PARAMETER = 'invalid.parameter'
-ERROR_CODE_INVALID_MIN = ''
+ERROR_CODE_INVALID_MIN_VALUE = 'invalid.min.value'
 ERROR_CODE_INVALID_FORMAT = 'invalid.{}.format'
 ERROR_CODE_FIELD_REQUIRED = 'required.{}'

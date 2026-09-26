@@ -50,7 +50,7 @@ def validar_minimo(valor: int, minimo: int, nombre:str)->int:
         logger.warning(f"Valor por debajo del minimo: '{nombre}' es {valor}, minimo esperado {minimo}")
 
         raise ValueError(construir_error_api(
-            code=const.ERROR_CODE_INVALID_MIN,
+            code=const.ERROR_CODE_INVALID_MIN_VALUE,
             message='Valor por debajo del minimo permitido',
             description=f"El parametro '{nombre}' debe ser mayor o igual a {minimo}. Se recibio {valor}"
         ))
