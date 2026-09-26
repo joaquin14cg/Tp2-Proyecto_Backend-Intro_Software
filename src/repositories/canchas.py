@@ -139,3 +139,20 @@ def contar_canchas(id_deporte=None, nombre=None, techada=None, activa=None):
     cursor.close()
     conexion.close()
     return total
+
+
+def existe_cancha(id_cancha: int) -> bool:
+    conexion = obtener_conexion()
+    cursor = conexion.cursor()
+
+    cursor.execute(
+        "SELECT 1 FROM canchas WHERE id = %s LIMIT 1",
+        (id_cancha,)
+    )
+
+    cancha = cursor.fetchone()
+
+    cursor.close()
+    conexion.close()
+
+    return cancha is not None

@@ -7,8 +7,6 @@ CREATE DATABASE IF NOT EXISTS club_deportivo
 USE club_deportivo;
 
 
-USE club_deportivo;
-
 
 DROP TABLE IF EXISTS bloqueos;
 DROP TABLE IF EXISTS reservas;

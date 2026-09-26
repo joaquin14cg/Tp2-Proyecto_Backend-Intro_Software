@@ -43,6 +43,33 @@ def crear_bloqueo(bloqueo_data):
     return id_bloqueo
 
 
+def existe_bloqueo_superpuesto(cancha_id, inicio, fin):
+
+    conexion = obtener_conexion()
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT EXISTS (
+            SELECT 1
+            FROM bloqueos
+            WHERE cancha_id = %s
+              AND inicio < %s
+              AND fin > %s
+        )
+    """, (
+        cancha_id,
+        fin,
+        inicio
+    ))
+
+    existe = cursor.fetchone()[0]
+
+    cursor.close()
+    conexion.close()
+
+    return bool(existe)
+
+
 def obtener_bloqueo_por_id(id):
     conexion = obtener_conexion()
     cursor = conexion.cursor(dictionary=True)
@@ -55,6 +82,7 @@ def obtener_bloqueo_por_id(id):
     conexion.close()
 
     return bloqueo
+
 
 
 def eliminar_bloqueo_db(id):

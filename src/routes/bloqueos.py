@@ -11,11 +11,14 @@ def get_bloqueos(): # Llamar al service para obtener los bloqueos
     return jsonify(resultados), 200
 
 
-@bloqueos_bp.route('/bloqueos', methods=['POST'])
+@bloqueos_bp.route("/bloqueos", methods=["POST"])
 def crear_bloqueo():
-    data = request.get_json() #contiene el JSON enviado en el cuerpo de la solicitud.
-    bloqueo = bloqueos.crear_bloqueo(data)
-    return jsonify(bloqueo), 201
+    
+    data = request.get_json()
+    resultado, codigo = bloqueos.crear_bloqueo(data)
+    return jsonify(resultado), codigo
+
+
 
 
 @bloqueos_bp.route("/bloqueos/<int:id>", methods=["DELETE"])
