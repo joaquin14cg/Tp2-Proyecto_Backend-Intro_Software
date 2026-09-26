@@ -28,7 +28,6 @@ def get_socios():
 @socios_bp.route('/socios', methods=['POST'])
 def post_socio():
     body = request.get_json(silent=True, force=True)
-    print("Lo que llega al body:", body)
     if body is None:
         return ut.error_body_invalido(), 400
     try:

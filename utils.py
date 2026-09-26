@@ -19,7 +19,7 @@ def construir_error_api(code:str, message:str, description:str, level:str = 'err
     }
 
 def validar_string_no_vacio(valor, nombre:str)->str:
-    if not valor or str(valor).strip():
+    if not valor or not str(valor).strip():
         raise ValueError(construir_error_api(
             code=const.ERROR_CODE_FIELD_REQUIRED.format(nombre),
             message=f"Campo requerido: '{nombre}'",
