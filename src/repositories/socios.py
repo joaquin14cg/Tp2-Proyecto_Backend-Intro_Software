@@ -11,7 +11,7 @@ def existe_socio_con_email(email:str, excluir_id : int=0)->bool:
     return len(filas) > 0
 
 def guardar_socio(datos:dict)->dict:
-    query = 'INSERT INTO socios (nombre , emaill, activo) values (%s, %s, %s)'
+    query = 'INSERT INTO socios (nombre , email, activo) values (%s, %s, %s)'
     valores = (datos['nombre'], datos['email'], datos['activo'])
     datos['id'] = ejecutar_mutacion(query, valores)
     return datos

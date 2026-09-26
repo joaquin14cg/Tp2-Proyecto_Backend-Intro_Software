@@ -55,7 +55,7 @@ def actualizar_socio(id):
     if body is None:
         return ut.error_body_invalido()
     try:
-        socio_actualizado = socios_services.actualizar_socio(id, body)
+        socios_services.actualizar_socio(id, body)
     except ValueError as e:
         mensaje_error = e.args[0]
         # Si el service no proporciona un código HTTP, usamos 400 como valor por defecto.
@@ -66,5 +66,5 @@ def actualizar_socio(id):
 
         return jsonify(mensaje_error), codigo_error
 
-    # Devuelve el socio actualizado
-    return jsonify(socio_actualizado), 200
+    # Devuelve 204 No Content 
+    return '', 204

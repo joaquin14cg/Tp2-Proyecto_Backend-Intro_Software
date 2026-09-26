@@ -52,8 +52,11 @@ def validar_email_disponible(email: str)->None:
 def crear_socio(body:dict)->dict:
     datos = validar_body_socio(body)
     validar_email_disponible(datos['email'])
-    
-    return construir_socio_dto(body)
+    datos['activo'] = True
+    socio_nuevo = socios_repo.guardar_socio(datos)
+    return construir_socio_dto(socio_nuevo)
+
+
 
 def actualizar_socio(id_socio: int, body: dict) -> dict:
     socio = socios_repo.obtener_socio_por_id(id_socio)
