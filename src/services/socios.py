@@ -14,10 +14,12 @@ def construir_socio_dto(socio:dict)->dict:
         'id':       socio['id'],
         'nombre':   socio['nombre'],
         'email':    socio['email'],
-        'activo':   socio['activo'],
+        'activo':   bool(socio['activo']),
     }
 
-def listar_socios_paginados(limit: int, offset: int, nombre: str = None, activo: bool = None)-> tuple[list, int]:
+def listar_socios_paginados(limit: int, offset: int, nombre: str = None, activo = None)-> tuple[list, int]:
+    if isinstance(activo,str):
+        activo = activo.lower() in ['true', '1']
     socios_raw = socios_repo.obtener_socios_paginados(limit, offset, nombre, activo)
     total = socios_repo.contar_total_socios(nombre, activo)
     socios = [construir_socio_dto(s) for s in socios_raw]
