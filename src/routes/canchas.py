@@ -1,13 +1,28 @@
 from flask import Blueprint, jsonify, request
-from src.services.canchas import listar_canchas, borrar_cancha, obtener_cancha, modificar_cancha
+from src.services.canchas import listar_canchas_paginadas, borrar_cancha, obtener_cancha, modificar_cancha
 from src.services.canchas import crear_cancha as service_crear_cancha
+import utils as ut
 
 canchas_bp = Blueprint('canchas', __name__)
 
 @canchas_bp.route('/canchas', methods=['GET'])
 def obtener_canchas():
-    lista_canchas = listar_canchas()
-    return jsonify({"canchas": lista_canchas}), 200
+    limit, offset, error = ut.obtener_parametros_paginacion(request)
+    if error:
+        return jsonify(error), 400
+
+    id_deporte = request.args.get('id_deporte', type=int)
+    nombre = request.args.get('nombre')
+    techada, error_techada = ut.obtener_parametro_booleano(request, 'techada')
+    if error_techada:
+        return jsonify(error_techada), 400
+    activa, error_activa = ut.obtener_parametro_booleano(request, 'activa')
+    if error_activa:
+        return jsonify(error_activa), 400
+
+    canchas, total = listar_canchas_paginadas(limit, offset, id_deporte, nombre, techada, activa)
+    respuesta = ut.construir_respuesta_paginada("canchas", canchas, total, limit, offset, "/canchas")
+    return jsonify(respuesta), 200
 
 @canchas_bp.route('/canchas/<int:id_cancha>', methods=['GET'])
 def obtener_cancha_por_id_route(id_cancha: int):

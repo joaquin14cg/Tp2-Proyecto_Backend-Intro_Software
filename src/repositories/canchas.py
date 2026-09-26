@@ -72,3 +72,70 @@ def actualizar_cancha(id_cancha: int, datos: dict):
     conexion.commit()
     cursor.close()
     conexion.close()
+
+
+# Esta funcion debe recibir un limit y un offset, y opcionalmente id_deporte, nombre, techada y activa, se ponen en None automaticamente si no se pasan
+# Los if lo que hacen es que si se pasan los parametros opcionales, se agregan a la lista de condiciones y a la lista de parametros, para luego armar la consulta SQL con un WHERE que contenga todas las condiciones concatenadas con AND
+def obtener_canchas_paginadas(limit, offset, id_deporte=None, nombre=None, techada=None, activa=None):
+    conexion = obtener_conexion()
+    cursor = conexion.cursor(dictionary=True)
+
+    condiciones = []
+    params = []
+
+    if id_deporte is not None:
+        condiciones.append("id_deporte = %s")
+        params.append(id_deporte)
+
+    if nombre is not None:
+        condiciones.append("LOWER(nombre) LIKE LOWER(%s)")
+        params.append(f"%{nombre}%")
+
+    if techada is not None:
+        condiciones.append("techada = %s")
+        params.append(techada)
+
+    if activa is not None:
+        condiciones.append("activa = %s")
+        params.append(activa)
+
+    where = ""
+    if condiciones:
+        where = "WHERE " + " AND ".join(condiciones)
+
+    cursor.execute(f"SELECT * FROM canchas {where} ORDER BY id ASC LIMIT %s OFFSET %s", params + [limit, offset])
+    canchas = cursor.fetchall()
+
+    cursor.close()
+    conexion.close()
+    return canchas
+
+def contar_canchas(id_deporte=None, nombre=None, techada=None, activa=None):
+    conexion = obtener_conexion()
+    cursor = conexion.cursor(dictionary=True)
+
+    condiciones = []
+    params = []
+    if id_deporte is not None:
+        condiciones.append("id_deporte = %s")
+        params.append(id_deporte)
+    if nombre is not None:
+        condiciones.append("LOWER(nombre) LIKE LOWER(%s)")
+        params.append(f"%{nombre}%")
+    if techada is not None:
+        condiciones.append("techada = %s")
+        params.append(techada)
+    if activa is not None:
+        condiciones.append("activa = %s")
+        params.append(activa)
+
+    where = ""
+    if condiciones:
+        where = "WHERE " + " AND ".join(condiciones)
+
+    cursor.execute(f"SELECT COUNT(*) AS total FROM canchas {where}", params)
+    total = cursor.fetchone()["total"]
+
+    cursor.close()
+    conexion.close()
+    return total

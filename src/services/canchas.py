@@ -4,7 +4,9 @@ from src.repositories.canchas import (
     obtener_cancha_por_id,
     tiene_reservas,
     eliminar_cancha,
-    actualizar_cancha
+    actualizar_cancha,
+    obtener_canchas_paginadas,
+    contar_canchas,
 )
 from src.repositories.deportes import obtener_deporte_por_id
 from utils import construir_error_api
@@ -20,8 +22,13 @@ def construir_cancha_dto(cancha: dict) -> dict:
         'techada': bool(cancha['techada']),
         'activa':  bool(cancha['activa'])
     }
-def listar_canchas() -> list[dict]:
-    return[construir_cancha_dto(c) for c in obtener_todas_las_canchas()]
+
+
+
+def listar_canchas_paginadas(limit, offset, id_deporte=None, nombre=None, techada=None, activa=None):
+    canchas = obtener_canchas_paginadas(limit, offset, id_deporte, nombre, techada, activa)
+    total = contar_canchas(id_deporte, nombre, techada, activa)
+    return [construir_cancha_dto(c) for c in canchas], total
 
 def crear_cancha(body: dict) -> dict:
     datos = validar_post_cancha(body)
