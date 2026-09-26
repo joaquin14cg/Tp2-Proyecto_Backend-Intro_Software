@@ -21,6 +21,8 @@ def get_socios():
         offset=offset,
         ruta_base="/socios"
     )
+    if not socios:
+        return '', 204
     return jsonify(respuesta), 200
 
 @socios_bp.route('/socios', methods=['POST'])
