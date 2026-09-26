@@ -1,7 +1,16 @@
 SET NAMES utf8mb4; -- sirve para trabajar con caracteres tipo ú
 
+CREATE DATABASE IF NOT EXISTS club_deportivo
+    CHARACTER SET utf8mb4
+    COLLATE utf8mb4_unicode_ci;
+
 USE club_deportivo;
 
+
+USE club_deportivo;
+
+
+DROP TABLE IF EXISTS bloqueos;
 DROP TABLE IF EXISTS reservas;
 DROP TABLE IF EXISTS socios;
 DROP TABLE IF EXISTS canchas;
@@ -54,7 +63,7 @@ CREATE TABLE reservas (
     FOREIGN KEY (cancha_id) REFERENCES canchas(id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-CREATE TABLE bloqueos(
+CREATE TABLE bloqueos (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 
     cancha_id INT NOT NULL,
@@ -62,8 +71,9 @@ CREATE TABLE bloqueos(
     inicio DATETIME(6) NOT NULL,
     fin DATETIME(6) NOT NULL,
     motivo VARCHAR(255) NOT NULL,
+
     FOREIGN KEY (cancha_id) REFERENCES canchas(id)
-)
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- Datos de prueba
 
