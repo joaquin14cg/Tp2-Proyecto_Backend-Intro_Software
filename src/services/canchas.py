@@ -2,6 +2,7 @@ from src.repositories.canchas import crear_cancha as repo_crear_cancha
 from src.repositories.canchas import obtener_todas_las_canchas
 from src.repositories.canchas import (
     obtener_cancha_por_id,
+    obtener_cancha_por_nombre,
     tiene_reservas,
     eliminar_cancha,
     actualizar_cancha,
@@ -23,8 +24,6 @@ def construir_cancha_dto(cancha: dict) -> dict:
         'activa':  bool(cancha['activa'])
     }
 
-
-
 def listar_canchas_paginadas(limit, offset, id_deporte=None, nombre=None, techada=None, activa=None):
     canchas = obtener_canchas_paginadas(limit, offset, id_deporte, nombre, techada, activa)
     total = contar_canchas(id_deporte, nombre, techada, activa)
@@ -32,6 +31,16 @@ def listar_canchas_paginadas(limit, offset, id_deporte=None, nombre=None, techad
 
 def crear_cancha(body: dict) -> dict:
     datos = validar_post_cancha(body)
+    cancha_existente = obtener_cancha_por_nombre(datos['nombre'])
+    if cancha_existente is not None:
+        raise ValueError(
+            construir_error_api(
+                code='cancha.conflict',
+                message='Nombre duplicado',
+                description=f"Ya existe una cancha con el nombre '{datos['nombre']}'"
+            ),
+            409
+        )
     deporte = obtener_deporte_por_id(datos['id_deporte'])
     if deporte is None:
         raise ValueError(

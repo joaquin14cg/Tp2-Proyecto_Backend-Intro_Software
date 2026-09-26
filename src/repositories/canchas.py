@@ -32,6 +32,15 @@ def obtener_cancha_por_id(id_cancha: int):
 
     return cancha
 
+def obtener_cancha_por_nombre(nombre: str):
+    conexion = obtener_conexion()
+    cursor = conexion.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM canchas WHERE nombre = %s", (nombre,))
+    cancha = cursor.fetchone()
+    cursor.close()
+    conexion.close()
+    return cancha
+
 def tiene_reservas(id_cancha: int) -> bool:
     conexion = obtener_conexion()
     cursor = conexion.cursor()
