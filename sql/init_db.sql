@@ -1,27 +1,10 @@
--- ============================================================
--- BASE DE DATOS
--- ============================================================
-
+SET NAMES utf8mb4; -- sirve para trabajar con caracteres con tildes
+ 
 CREATE DATABASE IF NOT EXISTS club_deportivo
     CHARACTER SET utf8mb4
     COLLATE utf8mb4_unicode_ci;
 
 USE club_deportivo;
-
-
--- ============================================================
--- USUARIO DE LA APLICACIÓN
--- ============================================================
-
-CREATE USER IF NOT EXISTS 'club_admin'@'localhost'
-    IDENTIFIED BY 'lanzillotta';
-
-GRANT ALL PRIVILEGES ON club_deportivo.*
-    TO 'club_admin'@'localhost';
-
-FLUSH PRIVILEGES;
-
-
 -- ============================================================
 -- LIMPIAR TABLAS
 -- ============================================================
@@ -40,7 +23,7 @@ DROP TABLE IF EXISTS deportes;
 CREATE TABLE deportes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL UNIQUE
-);
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 INSERT INTO deportes (nombre) VALUES
     ('Fútbol'),
@@ -53,27 +36,26 @@ INSERT INTO deportes (nombre) VALUES
 -- ============================================================
 
 CREATE TABLE canchas (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
-    deporte_id INT NOT NULL,
-    precio_hora DECIMAL(10,2) NOT NULL,
+    id_deporte INT NOT NULL,
+    precio_hora INT NOT NULL,
     techada BOOLEAN NOT NULL DEFAULT FALSE,
     activa BOOLEAN NOT NULL DEFAULT TRUE,
 
-    CONSTRAINT fk_cancha_deporte
-        FOREIGN KEY (deporte_id)
+        FOREIGN KEY (id_deporte)
         REFERENCES deportes(id)
-);
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 
 INSERT INTO canchas
-    (nombre, deporte_id, precio_hora, techada, activa)
+    (nombre, id_deporte, precio_hora, techada, activa)
 VALUES
-    ('Cancha Fútbol 1', 1, 15000.00, TRUE, TRUE),
-    ('Cancha Fútbol 2', 1, 13000.00, FALSE, TRUE),
-    ('Cancha Tenis 1', 2, 9000.00, FALSE, TRUE),
-    ('Cancha Pádel 1', 3, 10000.00, TRUE, TRUE),
-    ('Cancha Pádel 2', 3, 10000.00, FALSE, TRUE);
+    ('Cancha Fútbol 1', 1, 15000, TRUE, TRUE),
+    ('Cancha Fútbol 2', 1, 13000, FALSE, TRUE),
+    ('Cancha Tenis 1', 2, 9000, FALSE, TRUE),
+    ('Cancha Pádel 1', 3, 10000, TRUE, TRUE),
+    ('Cancha Pádel 2', 3, 10000, FALSE, TRUE);
 
 
 -- ============================================================
@@ -82,10 +64,12 @@ VALUES
 
 CREATE TABLE socios (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
-    email VARCHAR(150) NOT NULL UNIQUE
-    activo BOOLEAN DEFAULT TRUE
-);
+    nombre VARCHAR(100) NOT NULL UNIQUE,
+    email VARCHAR(150) NOT NULL UNIQUE,
+    activo BOOLEAN NOT NULL DEFAULT TRUE
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+
 
 
 INSERT INTO socios
@@ -103,20 +87,22 @@ VALUES
 -- ============================================================
 
 CREATE TABLE reservas (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+
     socio_id INT NOT NULL,
     cancha_id INT NOT NULL,
-    inicio DATETIME NOT NULL,
-    fin DATETIME NOT NULL,
-    estado VARCHAR(50) NOT NULL,
-    tarifa_hora DECIMAL(10,2) NOT NULL,
-    total DECIMAL(10,2) NOT NULL,
 
-    CONSTRAINT fk_reserva_socio
+    inicio DATETIME(6) NOT NULL,
+    fin DATETIME(6) NOT NULL,
+
+    estado VARCHAR(20) NOT NULL DEFAULT 'confirmada',
+
+    tarifa_hora INT NOT NULL,
+    total INT NOT NULL,
+
         FOREIGN KEY (socio_id)
         REFERENCES socios(id),
 
-    CONSTRAINT fk_reserva_cancha
         FOREIGN KEY (cancha_id)
         REFERENCES canchas(id)
 );
@@ -125,33 +111,24 @@ CREATE TABLE reservas (
 INSERT INTO reservas
     (socio_id, cancha_id, inicio, fin, estado, tarifa_hora, total)
 VALUES
-    (
-        1,
-        1,
-        '2026-10-15 18:00:00',
-        '2026-10-15 20:00:00',
-        'CONFIRMADA',
-        15000.00,
-        30000.00
-    ),
-    (
-        2,
-        3,
-        '2026-10-16 17:00:00',
-        '2026-10-16 18:00:00',
-        'CONFIRMADA',
-        9000.00,
-        9000.00
-    ),
-    (
-        3,
-        4,
-        '2026-10-17 19:00:00',
-        '2026-10-17 20:00:00',
-        'CONFIRMADA',
-        10000.00,
-        10000.00
-    );
+(
+    1,
+    1,
+    '2026-10-15 10:00:00.000000',
+    '2026-10-15 12:00:00.000000',
+    'confirmada',
+    15000,
+    30000
+),
+(
+    2,
+    3,
+    '2026-10-16 15:00:00.000000',
+    '2026-10-16 16:00:00.000000',
+    'confirmada',
+    9000,
+    9000
+);
 
 
 -- ============================================================
@@ -159,37 +136,32 @@ VALUES
 -- ============================================================
 
 CREATE TABLE bloqueos (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+
     cancha_id INT NOT NULL,
     fecha_bloqueo DATE NOT NULL,
-    inicio TIME NOT NULL,
-    fin TIME NOT NULL,
-    motivo VARCHAR(255),
+    inicio DATETIME(6) NOT NULL,
+    fin DATETIME(6) NOT NULL,
+    motivo VARCHAR(255) NOT NULL,
 
-    CONSTRAINT fk_bloqueo_cancha
-        FOREIGN KEY (cancha_id)
+    FOREIGN KEY (cancha_id)
         REFERENCES canchas(id)
-);
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 
 INSERT INTO bloqueos
     (cancha_id, fecha_bloqueo, inicio, fin, motivo)
 VALUES
-    (
-        1,
-        '2026-10-15',
-        '16:00:00',
-        '18:00:00',
-        'Mantenimiento'
-    ),
-    (
-        3,
-        '2026-10-16',
-        '15:00:00',
-        '17:00:00',
-        'Limpieza'
-    );
-
+(
+    1,
+    '2026-10-15',
+    '2026-10-15 16:00:00.000000',
+    '2026-10-15 18:00:00.000000',
+    'Mantenimiento'
+),
+(3,  '2026-10-16', '2026-10-16 12:00:00.000000',   '2026-10-16 14:00:00.000000',
+    'Limpieza'
+);
 
 -- ============================================================
 -- FINAL
