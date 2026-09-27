@@ -5,6 +5,7 @@ CREATE DATABASE IF NOT EXISTS club_deportivo
     COLLATE utf8mb4_unicode_ci;
 
 USE club_deportivo;
+
 -- ============================================================
 -- LIMPIAR TABLAS
 -- ============================================================
@@ -43,7 +44,7 @@ CREATE TABLE canchas (
     techada BOOLEAN NOT NULL DEFAULT FALSE,
     activa BOOLEAN NOT NULL DEFAULT TRUE,
 
-        FOREIGN KEY (id_deporte)
+    FOREIGN KEY (id_deporte)
         REFERENCES deportes(id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -100,13 +101,12 @@ CREATE TABLE reservas (
     tarifa_hora INT NOT NULL,
     total INT NOT NULL,
 
-        FOREIGN KEY (socio_id)
+    FOREIGN KEY (socio_id)
         REFERENCES socios(id),
 
-        FOREIGN KEY (cancha_id)
+    FOREIGN KEY (cancha_id)
         REFERENCES canchas(id)
 );
-
 
 INSERT INTO reservas
     (socio_id, cancha_id, inicio, fin, estado, tarifa_hora, total)
