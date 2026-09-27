@@ -84,17 +84,18 @@ CREATE TABLE socios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     email VARCHAR(150) NOT NULL UNIQUE
+    activo BOOLEAN DEFAULT TRUE
 );
 
 
 INSERT INTO socios
-    (nombre, email)
+    (nombre, email, activo)
 VALUES
-    ('Juan Pérez', 'juan.perez@gmail.com'),
-    ('María González', 'maria.gonzalez@gmail.com'),
-    ('Pedro Rodríguez', 'pedro.rodriguez@gmail.com'),
-    ('Lucía Fernández', 'lucia.fernandez@gmail.com'),
-    ('Nicolás López', 'nicolas.lopez@gmail.com');
+    ('Juan Pérez', 'juan.perez@gmail.com', TRUE),
+    ('María González', 'maria.gonzalez@gmail.com', TRUE),
+    ('Pedro Rodríguez', 'pedro.rodriguez@gmail.com', TRUE),
+    ('Lucía Fernández', 'lucia.fernandez@gmail.com', TRUE),
+    ('Nicolás López', 'nicolas.lopez@gmail.com', TRUE);
 
 
 -- ============================================================
