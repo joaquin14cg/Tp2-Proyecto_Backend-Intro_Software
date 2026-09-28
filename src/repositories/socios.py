@@ -27,7 +27,7 @@ def obtener_socios_paginados(limit:int, offset:int, nombre: str = None, activo :
         sql += ' AND LOWER(nombre) LIKE LOWER(%s)'
         params.append(f"%{nombre}%")
     if activo is not None:
-        sql += 'AND activo = %s'
+        sql += ' AND activo = %s'
         params.append(activo)    
     sql += ' ORDER BY id ASC LIMIT %s OFFSET %s'
     params.extend([limit, offset])

@@ -31,11 +31,7 @@ def buscar_socio_por_id(id_str: int)->dict:
     socio_id = validar_id_socio(id_str)
     socio = socios_repo.obtener_socio_por_id(socio_id)
     if not socio:
-        raise ValueError(ut.construir_error_api(
-            code=const.ERROR_CODE_SOCIO_NOT_FOUND,
-            message='Socio no encontrado',
-            description=f"No se encontro un socio registrado con el ID {socio_id}"
-        ))
+        return None
     return construir_socio_dto(socio)
 
 
