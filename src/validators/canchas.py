@@ -1,3 +1,5 @@
+from datetime import datetime
+from src.validators.reservas import validar_intervalo_reserva
 from utils import construir_error_api
 
 CAMPOS_EDITABLES = ('nombre', 'precio_hora', 'techada', 'activa')
@@ -178,3 +180,58 @@ def validar_patch_cancha(body: dict) -> dict:
             )
         datos['activa'] = body['activa']
     return datos
+def validar_disponibilidad(fecha: str, hora_inicio: str, hora_fin: str) -> tuple:
+    if not fecha:
+        raise ValueError(
+            construir_error_api(
+                code='required.fecha',
+                message='Campo requerido: fecha',
+                description='El parámetro fecha es obligatorio'
+            ),
+            400
+        )
+
+    if not hora_inicio:
+        raise ValueError(
+            construir_error_api(
+                code='required.hora_inicio',
+                message='Campo requerido: hora_inicio',
+                description='El parámetro hora_inicio es obligatorio'
+            ),
+            400
+        )
+
+    if not hora_fin:
+        raise ValueError(
+            construir_error_api(
+                code='required.hora_fin',
+                message='Campo requerido: hora_fin',
+                description='El parámetro hora_fin es obligatorio'
+            ),
+            400
+        )
+
+    try:
+        inicio = datetime.strptime(
+            f'{fecha}T{hora_inicio}',
+            '%Y-%m-%dT%H:%M:%S'
+        )
+
+        fin = datetime.strptime(
+            f'{fecha}T{hora_fin}',
+            '%Y-%m-%dT%H:%M:%S'
+        )
+
+    except ValueError:
+        raise ValueError(
+            construir_error_api(
+                code='cancha.intervalo_invalido',
+                message='Intervalo inválido',
+                description='La fecha y las horas tienen un formato inválido'
+            ),
+            400
+        )
+
+    validar_intervalo_reserva(inicio, fin)
+
+    return inicio, fin

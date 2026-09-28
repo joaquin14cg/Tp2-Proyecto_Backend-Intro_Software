@@ -8,11 +8,13 @@ from src.repositories.canchas import (
     actualizar_cancha,
     obtener_canchas_paginadas,
     contar_canchas,
+    obtener_canchas_activas,
 )
 from src.repositories.deportes import obtener_deporte_por_id
 from utils import construir_error_api
 from constants import MIN_ID
-from src.validators.canchas import validar_post_cancha, validar_patch_cancha
+from src.validators.canchas import validar_post_cancha, validar_patch_cancha, validar_disponibilidad
+from src.repositories.reservas import existe_reserva_confirmada_superpuesta
 
 def construir_cancha_dto(cancha: dict) -> dict:
     return { 
@@ -128,3 +130,91 @@ def modificar_cancha(id_cancha: int, body: dict) -> None:
 
     datos = validar_patch_cancha(body)
     actualizar_cancha(id_cancha, datos)
+
+def listar_canchas_disponibles(
+    fecha: str,
+    hora_inicio: str,
+    hora_fin: str,
+    id_deporte=None,
+    techada=None,
+    limit: int = 10,
+    offset: int = 0
+) -> dict:
+
+    inicio, fin = validar_disponibilidad(
+        fecha,
+        hora_inicio,
+        hora_fin
+    )
+
+    canchas = obtener_canchas_activas(
+        id_deporte,
+        techada
+    )
+    canchas_disponibles = []
+
+    for cancha in canchas:
+        if not existe_reserva_confirmada_superpuesta(
+            cancha['id'],
+            inicio,
+            fin
+        ):
+            canchas_disponibles.append(
+                construir_cancha_dto(cancha)
+            )
+
+    total = len(canchas_disponibles)
+    canchas_paginadas = canchas_disponibles[
+        offset:offset + limit
+    ]
+    ultimo_offset = 0
+
+    if total > 0:
+        ultimo_offset = ((total - 1) // limit) * limit
+    base_url = '/canchas/disponibles'
+
+    def construir_url(nuevo_offset):
+        parametros = [
+            f'fecha={fecha}',
+            f'hora_inicio={hora_inicio}',
+            f'hora_fin={hora_fin}'
+        ]
+
+        if id_deporte is not None:
+            parametros.append(f'id_deporte={id_deporte}')
+
+        if techada is not None:
+            parametros.append(f'techada={str(techada).lower()}')
+
+        parametros.append(f'_limit={limit}')
+        parametros.append(f'_offset={nuevo_offset}')
+
+        return base_url + '?' + '&'.join(parametros)
+
+    links = {
+    '_first': {
+        'href': construir_url(0)
+    }
+    }
+
+    if offset > 0:
+    links['_prev'] = {
+        'href': construir_url(max(0, offset - limit))
+    }
+
+    if offset + limit < total:
+    links['_next'] = {
+        'href': construir_url(offset + limit)
+    }
+
+i   f total > 0:
+    links['_last'] = {
+        'href': construir_url(ultimo_offset)
+    }
+
+    return {
+        'canchas': canchas_paginadas,
+        '_limit': limit,
+        '_offset': offset,
+        '_links': links
+    }

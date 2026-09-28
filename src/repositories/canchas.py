@@ -165,3 +165,31 @@ def existe_cancha(id_cancha: int) -> bool:
     conexion.close()
 
     return cancha is not None
+
+def obtener_canchas_activas(id_deporte=None, techada=None):
+    conexion = obtener_conexion()
+    cursor = conexion.cursor(dictionary=True)
+
+    consulta = """
+        SELECT *
+        FROM canchas
+        WHERE activa = TRUE
+    """
+
+    parametros = []
+
+    if id_deporte is not None:
+        consulta += " AND id_deporte = %s"
+        parametros.append(id_deporte)
+
+    if techada is not None:
+        consulta += " AND techada = %s"
+        parametros.append(techada)
+
+    consulta += " ORDER BY id ASC"
+    cursor.execute(consulta, tuple(parametros))
+    canchas = cursor.fetchall()
+    cursor.close()
+    conexion.close()
+
+    return canchas
