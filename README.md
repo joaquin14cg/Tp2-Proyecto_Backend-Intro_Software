@@ -19,7 +19,7 @@
 # Funcionamiento
 
 1. Ejecutar setup.sh con: bash setup.sh
-2. Tendras que escribir la contraseña de tu sistema
+2. Tendras que escribir la contraseña del sistema de SQL
 3. Cuando empiece a andar la API Utilizar Postman para utilizar los diferentes endpoints
 
 Al querer volver a arrancar la API ejecturar python3 app.py. 
