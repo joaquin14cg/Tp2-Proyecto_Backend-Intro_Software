@@ -13,6 +13,10 @@ def get_socios():
     activo = request.args.get('activo')
     
     socios, total = socios_services.listar_socios_paginados(limit, offset, nombre, activo)
+
+    if not socios:
+        return '', 204
+
     respuesta = ut.construir_respuesta_paginada(
         clave="socios",
         items=socios,
@@ -21,8 +25,6 @@ def get_socios():
         offset=offset,
         ruta_base="/socios"
     )
-    if not socios:
-        return '', 204
     return jsonify(respuesta), 200
 
 @socios_bp.route('/socios', methods=['POST'])
