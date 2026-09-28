@@ -198,19 +198,19 @@ def listar_canchas_disponibles(
     }
 
     if offset > 0:
-    links['_prev'] = {
+        links['_prev'] = {
         'href': construir_url(max(0, offset - limit))
     }
 
     if offset + limit < total:
-    links['_next'] = {
+        links['_next'] = {
         'href': construir_url(offset + limit)
     }
 
-i   f total > 0:
-    links['_last'] = {
-        'href': construir_url(ultimo_offset)
-    }
+    if total > 0:
+        links['_last'] = {
+            'href': construir_url(ultimo_offset)
+        }
 
     return {
         'canchas': canchas_paginadas,
